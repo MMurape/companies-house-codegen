@@ -27,8 +27,8 @@ The argument parser used by __main__.py
 from __future__ import annotations
 
 import sys
-import argparse
 import typing
+import argparse
 from pathlib import Path
 from dataclasses import dataclass
 from importlib.metadata import version
@@ -148,8 +148,7 @@ class CLIArgumentParser(argparse.ArgumentParser):
             if RE_SERVER_ADDR.match(string) is None:
                 raise ValueError(f"Expected 'IP:PORT', got '{string}'")
             ip, port = string.split(":")
-            port = int(port)
-            return (ip, port)
+            return (ip, int(port))
 
         output_options.add_argument(
             "--serve",

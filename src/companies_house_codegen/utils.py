@@ -32,6 +32,7 @@ import http.server
 from typing import IO, Any, TypeVar, Iterable
 from pathlib import Path
 from collections.abc import Mapping
+
 from yaml import MappingNode
 from yaml.representer import SafeRepresenter
 

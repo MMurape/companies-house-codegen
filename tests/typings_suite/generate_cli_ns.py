@@ -2,6 +2,8 @@
 Generator for `CLINamespace`.
 """
 
+from __future__ import annotations
+
 import sys
 import inspect
 import argparse
@@ -179,7 +181,7 @@ class {cls.__name__}{parents}:
 if __name__ == "__main__":
     from companies_house_codegen.argument import CLIArgumentParser
 
-    print(
+    print( # noqa: T201
         generate_namespace_typing(  # noqa: T201
             CLIArgumentParser(),
             "CLINamespace",
