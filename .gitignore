@@ -11,6 +11,7 @@ openapi*
 
 # Docs
 !mkdocs.yml
+!.github/**
 
 # Based on: https://github.com/github/gitignore/blob/main/Python.gitignore #
 
