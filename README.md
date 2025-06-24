@@ -1,6 +1,7 @@
 
 # companies-house-codegen
 
+[![mkdocs](https://github.com/mmurape/companies-house-codegen/workflows/mkdocs/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
 [![ruff](https://github.com/mmurape/companies-house-codegen/workflows/ruff/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
 [![mypy](https://github.com/mmurape/companies-house-codegen/workflows/mypy/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
 
@@ -23,17 +24,18 @@ This small, configurable and simple tool fetches the OpenAPI for Companies House
 and [`typing-extensions`](https://github.com/python/typing_extensions).
 You may also, optionally, install pydantic for typesafety.
 
-### Using `pip` VCS Support
+### PIP (VCS Support)
 
-You can install this package by simply running:
+[`pip`] is the default package installer for Python, enabling easy installation and management of packages from the [Python Package Index](https://pypi.org/) (**PyPI**) via the command line.
 
 ```sh
 pip install git+https://github.com/MMurape/companies-house-codegen.git@main
 ```
 
 > [!TIP]
-> See pip documentation [VCS Support](https://pip.pypa.io/en/stable/topics/vcs-support/)
-> for more infomation
+> See `pip`'s documentation [VCS Support](https://pip.pypa.io/en/stable/topics/vcs-support/)
+> for more infomation. Note, that most modern package managers also come with VCS support
+> similar to `pip`.
 
 ### (Manual) Git Clone Installation
 
@@ -46,7 +48,7 @@ Alternatively you can install this package using the following steps:
     cd companies-house-codegen # change directory to this repository
     ```
 
-3. To install package using:
+3. Install the package using package manager of your choice:
 
     ```sh
     pip install .
