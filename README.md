@@ -19,27 +19,48 @@ This small, configurable and simple tool fetches the OpenAPI for Companies House
 
 ## Installation
 
-`companies-house-codegen` requires Python 3.8+.
+`companies-house-codegen` requires Python 3.8+
+and [`typing-extensions`](https://github.com/python/typing_extensions).
+You may also, optionally, install pydantic for typesafety.
 
-### Git Clone Installation
+### Using `pip` VCS Support
 
-After clone this repository, the run the following command:
-
-```sh
-cd companies-house-codegen # change directory to this repository
-```
-
-To install the entire library and cli run:
+You can install this package by simply running:
 
 ```sh
-pip install .
+pip install git+https://github.com/MMurape/companies-house-codegen.git@main
 ```
+
+> [!TIP]
+> See pip documentation [VCS Support](https://pip.pypa.io/en/stable/topics/vcs-support/)
+> for more infomation
+
+### (Manual) Git Clone Installation
+
+Alternatively you can install this package using the following steps:
+
+1. Clone this repository
+2. After clone this repository, the run the following command:
+
+    ```sh
+    cd companies-house-codegen # change directory to this repository
+    ```
+
+3. To install package using:
+
+    ```sh
+    pip install .
+    ```
 
 ## Usage
 
 This toolkit can either be used
-as a command-line interface [`companies-house-codegen`](command-line-interface.md)
-or as a [python library](api-reference/index.md).
+as a command-line interface - [`companies-house-codegen`](command-line-interface.md) -
+or as a python module - [`companies_house_codegen`](api-reference/index.md).
+
+For more information on command-line interface see: [API Reference](api-reference/index.md).
+
+For more information on command-line interface see: [CLI Reference](command-line-interface.md).
 
 ### Example: Download Companies House Public Data API and convert it to OpenAPI 3.0.1
 
@@ -63,7 +84,7 @@ from companies_house_codegen.utils import mapping_representer
 import yaml
 from yaml import CDumper
 
-public_data_api_openapi = download_openapi(' https://developer-specs.company-information.service.gov.uk/api.ch.gov.uk-specifications/swagger-2.0/spec/swagger.json')
+public_data_api_openapi = download_openapi('https://developer-specs.company-information.service.gov.uk/api.ch.gov.uk-specifications/swagger-2.0/spec/swagger.json')
 with open('public_data_api_openapi.yml', 'w') as f:
     # yaml does not know how to dump special an Mappings like OrderedDict.
     CDumper.add_representer(OrderedDict, mapping_representer)

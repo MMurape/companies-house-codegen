@@ -1,9 +1,12 @@
 site_name: "companies-house-codegen"
-#site_url: ""
+site_url: "https://MMurape.github.io/companies-house-codegen"
 repo_url: "https://github.com/MMurape/companies-house-codegen"
 repo_name: "MMurape/companies-house-codegen"
-watch: [mkdocs.yml, README.md, CONTRIBUTING.md, 
-        src/companies_house_codegen, tests/typings_suite]
+watch: [mkdocs.yml,
+        #README.md, copy mannually
+        CONTRIBUTING.md, 
+        src/companies_house_codegen,
+        tests/typings_suite]
 site_dir: "site"
 site_author: "Munyaradzi Murape"
 site_description: >-
