@@ -1,6 +1,9 @@
 
 # companies-house-codegen
 
+[![ruff](https://github.com/mmurape/companies-house-codegen/workflows/ruff/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
+[![mypy](https://github.com/mmurape/companies-house-codegen/workflows/mypy/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
+
 A simple but powerful toolkit for downloading, compressing and formatting
 Companies House OpenAPI (Swagger 2.0) specifications.
 
