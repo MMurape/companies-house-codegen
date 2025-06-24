@@ -3,7 +3,12 @@ name: ruff
 on:
   push:
     paths:
-      
+      - src/**
+      - test/**
+  pull_request:
+    paths:
+      - src/**
+      - test/**
 
 jobs:
   ruff:
