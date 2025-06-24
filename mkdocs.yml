@@ -5,6 +5,7 @@ repo_name: "MMurape/companies-house-codegen"
 watch: [mkdocs.yml,
         #README.md, copy mannually
         CONTRIBUTING.md, 
+        CODE_OF_CONDUCT.md,
         src/companies_house_codegen,
         tests/typings_suite]
 site_dir: "site"
