@@ -1,6 +1,9 @@
 name: ruff
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+      
 
 jobs:
   ruff:
