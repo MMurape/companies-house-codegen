@@ -2,6 +2,10 @@ name: mkdocs
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - src/**
+      - tests/**
+      - "*.md"
 permissions:
   contents: write
   pages: write
