@@ -11,7 +11,7 @@ it allows you to install and manage different version of python.
 See [this](https://github.com/pyenv/pyenv#installation) guide on installation.
 Once installed simply run:
 
-```sh
+```shell
 pyenv install 3.8
 ```
 
@@ -33,7 +33,7 @@ Python versions.
 
 To install - say - Python 3.8, run:
 
-```sh
+```shell
 uv python install 3.8
 ```
 
@@ -55,14 +55,14 @@ in your prefered package manager.
 >
 > If you are on such a version, run this command first:
 >
-> ```sh
+> ```shell
 > sudo apt-get install software-properties-common
 > sudo add-apt-repository ppa:deadsnakes/ppa
 > ```
 >
 > Then run the below:
 
-```sh
+```shell
 sudo apt-get update
 sudo apt-get install python3.8 # install Python 3.8
 ```
@@ -71,7 +71,7 @@ sudo apt-get install python3.8 # install Python 3.8
 
 /// tab | Fedora
 
-```sh
+```shell
 sudo dnf install python3.8
 ```
 
@@ -85,7 +85,7 @@ sudo dnf install python3.8
 > [Arch User Repository](https://aur.archlinux.org/packages) (**AUR**):
 > `yay -S python38`
 
-```sh
+```shell
 sudo pacman -S python3.8
 ```
 
@@ -97,11 +97,11 @@ sudo pacman -S python3.8
 > If you do not have [Homebrew](https://brew.sh/) installed on your OS X terminal,
 > you can install it using the following command:
 >
-> ```sh
+> ```shell
 > /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 > ```
 
-```sh
+```shell
 brew install python3.8
 ```
 

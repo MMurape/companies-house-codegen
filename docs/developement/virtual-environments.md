@@ -21,19 +21,19 @@ Python virtual environments. It is very similar to [venv](#creating-virtual-envi
 First you must install virtualenv:
 
 === "pip"
-    ```sh
+    ```shell
     pip install virtualenv
     ```
 
 === "pipx"
-    ```sh
+    ```shell
     # install in an isolated environment
     pipx install virtualenv
     ```
 
 To create a new virtual environment simply run the following:
 
-```sh
+```shell
 # creates a virtual environment stored in the directory `./venv/`
 python -m venv venv
 ```
@@ -66,7 +66,7 @@ Python standard library module that can be used to create virtual Python environ
 
 To create a new virtual environment simply run the following:
 
-```sh
+```shell
 # creates a virtual environment stored in the directory `./venv/`
 python -m venv venv
 ```
@@ -75,7 +75,7 @@ Once you’ve created a virtual environment, you may activate it.
 
 /// tab | Unix/MacOS
 
-```sh
+```shell
 source ./venv/bin/activate
 ```
 

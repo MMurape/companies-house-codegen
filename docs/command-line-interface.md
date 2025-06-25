@@ -2,7 +2,7 @@
 
 Once you have installed `companies-house-codegen`, run the following:
 
-```sh
+```shell
 companies-house-codegen --help
 ```
 
@@ -42,7 +42,7 @@ Debugging options:
 
 Here is an example use case
 
-```sh
+```shell
 # Download Companies House Public Data API and convert it to OpenAPI 3.0.1
 companies-house-codegen -i https://developer-specs.company-information.service.gov.uk/api.ch.gov.uk-specifications/swagger-2.0/spec/swagger.json --zip public_data_api_openapi.yml --openapi
 ```

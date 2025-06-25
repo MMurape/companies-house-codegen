@@ -4,7 +4,7 @@ repo_url: "https://github.com/MMurape/companies-house-codegen"
 repo_name: "MMurape/companies-house-codegen"
 watch: [mkdocs.yml,
         #README.md, copy mannually
-        CONTRIBUTING.md, 
+        #CONTRIBUTING.md, copy manually & edit markdown links
         CODE_OF_CONDUCT.md,
         src/companies_house_codegen,
         tests/typings_suite]
