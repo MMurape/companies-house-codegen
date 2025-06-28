@@ -181,8 +181,8 @@ class {cls.__name__}{parents}:
 if __name__ == "__main__":
     from companies_house_codegen.argument import CLIArgumentParser
 
-    print( # noqa: T201
-        generate_namespace_typing(  # noqa: T201
+    print(  # noqa: T201
+        generate_namespace_typing(
             CLIArgumentParser(),
             "CLINamespace",
             default_aliases=[(sys.stdout, "sys.stdout")],
