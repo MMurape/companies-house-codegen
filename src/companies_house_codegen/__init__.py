@@ -25,7 +25,6 @@ from __future__ import annotations
 import sys
 import json
 import logging
-import warnings
 import traceback
 from typing import IO, Any, cast
 from pathlib import Path
@@ -48,12 +47,6 @@ from companies_house_codegen.constants import LOOPBACK_ADDR, ExitCode
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-
-warnings.warn(
-    f"{__name__} is pre-release software and not ready for production use."
-    " Expect to encounter bugs, missing features, and minor errors.",
-    stacklevel=2,
-)
 
 
 def void_main(args: Sequence[str] | None = None) -> None:
