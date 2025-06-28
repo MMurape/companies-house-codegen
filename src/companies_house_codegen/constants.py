@@ -25,7 +25,7 @@ Important constants for related to codegen
 """
 
 import re
-from enum import Enum, IntEnum  # NOTE: Python 3.7 does not have StrEnum
+from enum import Enum, Flag, IntEnum, auto  # NOTE: Python 3.8 does not have StrEnum
 
 COMPANIES_HOUSE_HOST = "developer-specs.company-information.service.gov.uk"
 """
@@ -138,6 +138,65 @@ class CHOAS(str, Enum):
     """A streaming API giving access to real time data changes."""
 
 
+class ReFormatFlags(Flag):
+    """
+    Flags for formatting.
+
+    See Also
+    --------
+    reformat_swagger: Reformats Companies House Swagger 2.0 specifications (in-place)
+        and returns refs defined in the schema.
+    """
+
+    TYPE_DATE_TO_STRING = auto()
+    """
+    Convert instances of `type<date>` to `type<string(format="date")>`
+    """
+
+    TYPE_LIST_TO_ARRAY = auto()
+    """
+    Convert instance of `type<list>` to `type<array(item='string')>`
+    """
+
+    TYPE_INFER_BOOLEANS = auto()
+    """
+    Infers if type is a boolean.
+    """
+
+    TYPE_ARRAY_ENSURE_ITEMS = auto()
+    """
+    Ensure that `items` attribute is in array.
+    """
+
+    PATHS_ENSURE_SNAKECASE = auto()
+    """
+    Ensure that path parameters use snakecase.
+    """
+
+    PARAM_PARAMTYPE_TO_IN = auto()
+    """
+    Convert `parameters<paramType>` to `parameters<in>` and delete the `paramType` key.
+    """
+
+    PARAM_TITLE_TO_NAME = auto()
+    """
+    Convert `parameters[_]<title>` to `parameters[_]<name>` and delete the `title` key.
+    """
+
+
+SELECT_ALL_FORMAT_FLAGS = (
+    ReFormatFlags.TYPE_DATE_TO_STRING
+    | ReFormatFlags.TYPE_ARRAY_ENSURE_ITEMS
+    | ReFormatFlags.PATHS_ENSURE_SNAKECASE
+    | ReFormatFlags.TYPE_LIST_TO_ARRAY
+    | ReFormatFlags.PARAM_TITLE_TO_NAME
+    | ReFormatFlags.PARAM_PARAMTYPE_TO_IN
+)
+"""
+Union off all FormatFlags.
+"""
+
+
 # TODO: document
 class URLScheme(str, Enum):
     """
@@ -201,6 +260,8 @@ __all__ = [
     "LOOPBACK_ADDR",
     "RE_REMOTE_JSON_REF_PATH",
     "RE_URL",
+    "ReFormatFlags",
+    "SELECT_ALL_FORMAT_FLAGS",
     "CHOAS",
     "URLScheme",
     "ExitCode",

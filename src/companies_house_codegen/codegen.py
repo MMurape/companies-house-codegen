@@ -46,15 +46,15 @@ from companies_house_codegen.types import (
     RemoteJsonRefPathStr,
     validate_call,
 )
-
-# Local Library Imports
 from companies_house_codegen.constants import (
     RE_URL,
     ALLOWED_TYPES,
     LOOPBACK_ADDR,
     COMPANIES_HOUSE_HOST,
     RE_REMOTE_JSON_REF_PATH,
+    SELECT_ALL_FORMAT_FLAGS,
     URLScheme,
+    ReFormatFlags,
 )
 
 logger = logging.getLogger(__name__)
@@ -70,6 +70,7 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr,
     host: str = COMPANIES_HOUSE_HOST,
     scheme: URLSchemeType = URLScheme.HTTPS,
+    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
 ) -> list[SplitResult]:
     """
     Reformats Companies House Swagger 2.0 specifications (in-place)
@@ -88,6 +89,8 @@ def reformat_swagger(
     scheme: str
         The scheme that will be used for http request
         Default `'https'`.
+    flags: FormatFlags, optional
+        selects various formatting features
 
     Notes
     -----
@@ -124,35 +127,75 @@ def reformat_swagger(
 
     refs: list[SplitResult] = []
 
+    DEBUG_CONVERSION = "\t\t- Swagger document conversion: `{old}`->`{new}`"
+    ERR_ADDITIONAL_PROP = (
+        "\t\t- Swagger document invalid: found additional property `{prop}` in `{type}`"
+    )
+    ERR_PROPERTY_NOT_FOUND = (
+        "\t\t- Swagger document invalid: `{type}` must have property `{prop}`"
+    )
+    ERR_UNSUPPORTED_TYPE = (
+        "Swagger document invalid: unsupported type `{type}`. "
+        f"The following date types are supported: {set(ALLOWED_TYPES)}"
+    )
+
     def inner(
-        swagger: OrderedDict[str, Any], url_path: str, *, _parent_key: str | None = None
+        swagger: OrderedDict[str, Any],
+        url_path: str,
+        *,
+        _parent_key: str | None = None,
+        _i: int | None = None,
     ) -> None:
         """
         Hide the true API from the client by putting it inside of a closure.
 
-        NOTE: parses `swagger` using depth-first search traversal strategy
+        NOTE: parses `swagger` using depth-first search traversal strategy.
         """
-        nonlocal camel_to_snake, host, refs, scheme
+        nonlocal camel_to_snake, DEBUG_CONVERSION, ERR_ADDITIONAL_PROP
+        nonlocal ERR_PROPERTY_NOT_FOUND, ERR_UNSUPPORTED_TYPE
+        nonlocal host, flags, refs, scheme
 
-        # TODO: diff check reporting
         if "type" in swagger:
             tmp = swagger["type"]
             if tmp == "date":
                 # NOTE: Companies House treats date as a type instead of a format
                 # type<date> = type<string(format='date')>
-                logger.debug('Converting `data` to `string(format="date")`')
-                swagger["type"] = "string"
-                swagger["format"] = "date"
-
+                if flags is not None and ReFormatFlags.TYPE_DATE_TO_STRING in flags:
+                    logger.debug(
+                        DEBUG_CONVERSION.format(
+                            old="type<date>",
+                            new="type<string>, format<date>"
+                        )
+                    )
+                    swagger["type"] = "string"
+                    swagger["format"] = "date"
+                else:
+                    logger.error(ERR_UNSUPPORTED_TYPE.format(type="date"))
             elif tmp == "list":
                 # NOTE: Companies House aliases array to list
                 # type<list> = type<array(item='string', collectionFormat='csv'|'multi')>
-                logger.debug("Converting `list` to `array`")
-                swagger["type"] = "array"
-                swagger["items"] = OrderedDict({"type": "string"})
+                if flags is not None and ReFormatFlags.TYPE_LIST_TO_ARRAY in flags:
+                    logger.debug(
+                        DEBUG_CONVERSION.format(
+                            old="list",
+                            new="type<array>, items<type<string>>"
+                        )
+                    )
+                    swagger["type"] = "array"
+                    swagger["items"] = OrderedDict({"type": "string"})
+                else:
+                    logger.error("\t\t- Skipping `list` conversion")
             elif tmp == "array" and "items" not in swagger:
                 # ensure array has items
-                swagger["items"] = OrderedDict({"type": "string"})
+                if flags is not None and ReFormatFlags.TYPE_ARRAY_ENSURE_ITEMS in flags:
+                    logger.debug('\t\t- Adding `items(type="string")` to `array`')
+                    swagger["items"] = OrderedDict({"type": "string"})
+                else:
+                    logger.error(
+                        ERR_PROPERTY_NOT_FOUND.format(
+                            type="type<array>", prop="items"
+                        )
+                    )
         if "$ref" in swagger:
             tmp = cast(str, swagger["$ref"])
             if tmp.startswith(LOOPBACK_ADDR):
@@ -170,19 +213,44 @@ def reformat_swagger(
             swagger["$ref"] = tmp
         if _parent_key == "parameters":
             if "paramType" in swagger:
-                if "in" not in swagger:
-                    swagger["in"] = swagger["paramType"]
-                del swagger["paramType"]
+                if flags is not None and ReFormatFlags.PARAM_PARAMTYPE_TO_IN in flags:
+                    logger.debug(DEBUG_CONVERSION.format(old="paramtype", new="in"))
+                    if "in" not in swagger:
+                        swagger["in"] = swagger["paramType"]
+                    del swagger["paramType"]
+                else:
+                    logger.error(
+                        ERR_ADDITIONAL_PROP.format(prop="paramType", type=f"parameter[{_i}]")
+                    )
+                    if "in" not in swagger:
+                        logger.error(
+                            ERR_PROPERTY_NOT_FOUND.format(type=f"parameters[{_i}]", prop="in")
+                        )
             if "title" in swagger:
                 # NOTE: sometimes Companies House aliases "name" to "title"
-                swagger["name"] = swagger["title"]
-                del swagger["title"]
+                if flags is not None and ReFormatFlags.PARAM_TITLE_TO_NAME in flags:
+                    logger.debug(DEBUG_CONVERSION.format(old="title", new="name"))
+                    swagger["name"] = swagger["title"]
+                    del swagger["title"]
+                else:
+                    logger.error(
+                        ERR_ADDITIONAL_PROP.format(
+                            prop="title", type=f"parameter[{_i}]"
+                        )
+                    )
             if "type" in swagger:
                 # NOTE: sometimes Companies House treats booleans like strings
                 tmp = swagger["type"] if swagger["type"] in ALLOWED_TYPES else "string"
                 if tmp == "string" and "description" in swagger:
-                    if all(i in swagger["description"] for i in ("true", "false")):
+                    if (
+                        "true" in swagger["description"]
+                        and "false" in swagger["description"]
+                    ):
                         # infer type is boolean from description
+                        logger.debug(
+                            f"\t\t- inferring type<{swagger['type']}> "
+                            "is boolean from desciption."
+                        )
                         tmp = "boolean"
                         if "enum" in swagger:
                             del swagger["enum"]
@@ -207,23 +275,38 @@ def reformat_swagger(
                     ]
                 )
                 if tmp != k:
-                    logger.debug(f"\t\t\t- Correcting case of path:'{tmp}' -> '{k}'")
+                    if (
+                        flags is not None
+                        and ReFormatFlags.PATHS_ENSURE_SNAKECASE in flags
+                    ):
+                        logger.debug(
+                            f"\t\t\t- Correcting case of path:'{tmp}' -> '{k}'"
+                        )
+                    else:
+                        logger.warning(
+                            "\t\t\t- Style error: paths must use snakecase, "
+                            f"found path '{tmp}'"
+                        )
+                        k = tmp
                 swagger[k] = v
 
         for k, v in swagger.items():
             if isinstance(v, list):
-                for v_i in cast(list[Any], v):  # type:ignore[redundant-cast] # Pylance
+                v = cast(list[Any], v)  # type:ignore[redundant-cast] # Pylance
+                for i, v_i in enumerate(v):
                     if isinstance(v_i, OrderedDict):
                         inner(
                             swagger=cast(OrderedDict[str, Any], v_i),
                             url_path=url_path,
                             _parent_key=k,
+                            _i=i,
                         )
             elif isinstance(v, OrderedDict):
                 inner(
                     swagger=cast(OrderedDict[str, Any], v),
                     url_path=url_path,
                     _parent_key=k,
+                    _i=_i,
                 )
 
     inner(swagger=swagger, url_path=remote_path)
@@ -307,7 +390,7 @@ def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder
 def zip_folder(
     folder: SchemaFolder,
     remote_path: RemoteJsonRefPathStr,
-    #    keep_unused_defintions: bool = False,  # TODO: feature
+    # keep_unused_defintions: bool = False,  # TODO: feature
 ) -> JSONSchema:
     """
     Zips/compresses/packages folder of Companies House Swagger specifications
