@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "companies-house-codegen"
-version = "0.1.1"
+version = "0.1.2"
 description = "A simple but powerful toolkit for Companies House OpenAPI (Swagger 2.0) specifications."
 authors = [
     {name = "Munyaradzi Murape"},

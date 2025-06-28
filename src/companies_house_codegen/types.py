@@ -110,5 +110,5 @@ __all__ = [
     "RemoteJsonRefPathStr",
     "JSONSchema",
     "SchemaFolder",
-    "URLScheme",
+    "URLSchemeType",
 ]
