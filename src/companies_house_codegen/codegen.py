@@ -27,6 +27,7 @@ Code formatting and generation
 from __future__ import annotations
 
 import json
+import difflib
 import logging
 from string import Formatter
 from typing import Any, cast
@@ -70,6 +71,7 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr,
     host: str = COMPANIES_HOUSE_HOST,
     scheme: URLSchemeType = URLScheme.HTTPS,
+    log_diffs: bool = False,
     flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
 ) -> list[SplitResult]:
     """
@@ -89,6 +91,8 @@ def reformat_swagger(
     scheme: str
         The scheme that will be used for http request
         Default `'https'`.
+    log_diffs: bool
+        Logs the difference between pre and post formatting
     flags: FormatFlags, optional
         selects various formatting features
 
@@ -163,8 +167,7 @@ def reformat_swagger(
                 if flags is not None and ReFormatFlags.TYPE_DATE_TO_STRING in flags:
                     logger.debug(
                         DEBUG_CONVERSION.format(
-                            old="type<date>",
-                            new="type<string>, format<date>"
+                            old="type<date>", new="type<string>, format<date>"
                         )
                     )
                     swagger["type"] = "string"
@@ -177,8 +180,7 @@ def reformat_swagger(
                 if flags is not None and ReFormatFlags.TYPE_LIST_TO_ARRAY in flags:
                     logger.debug(
                         DEBUG_CONVERSION.format(
-                            old="list",
-                            new="type<array>, items<type<string>>"
+                            old="list", new="type<array>, items<type<string>>"
                         )
                     )
                     swagger["type"] = "array"
@@ -192,9 +194,7 @@ def reformat_swagger(
                     swagger["items"] = OrderedDict({"type": "string"})
                 else:
                     logger.error(
-                        ERR_PROPERTY_NOT_FOUND.format(
-                            type="type<array>", prop="items"
-                        )
+                        ERR_PROPERTY_NOT_FOUND.format(type="type<array>", prop="items")
                     )
         if "$ref" in swagger:
             tmp = cast(str, swagger["$ref"])
@@ -220,11 +220,15 @@ def reformat_swagger(
                     del swagger["paramType"]
                 else:
                     logger.error(
-                        ERR_ADDITIONAL_PROP.format(prop="paramType", type=f"parameter[{_i}]")
+                        ERR_ADDITIONAL_PROP.format(
+                            prop="paramType", type=f"parameter[{_i}]"
+                        )
                     )
                     if "in" not in swagger:
                         logger.error(
-                            ERR_PROPERTY_NOT_FOUND.format(type=f"parameters[{_i}]", prop="in")
+                            ERR_PROPERTY_NOT_FOUND.format(
+                                type=f"parameters[{_i}]", prop="in"
+                            )
                         )
             if "title" in swagger:
                 # NOTE: sometimes Companies House aliases "name" to "title"
@@ -309,7 +313,25 @@ def reformat_swagger(
                     _i=_i,
                 )
 
-    inner(swagger=swagger, url_path=remote_path)
+    if log_diffs:
+        lines1 = json.dumps(swagger, indent=2, sort_keys=False).splitlines()
+        inner(swagger=swagger, url_path=remote_path)
+        lines2 = json.dumps(swagger, indent=2, sort_keys=False).splitlines()
+        logger.info(
+            "diff view"
+            + "\n".join(
+                f"\033[31m{line}\033[0m"
+                if line.startswith("-")  # for removals
+                else f"\033[32m{line}\033[0m"
+                if line.startswith("+")  # for additions
+                else line
+                for line in difflib.unified_diff(
+                    lines1, lines2, "Original", "Formatted"
+                )
+            )
+        )
+    else:
+        inner(swagger=swagger, url_path=remote_path)
     return refs
 
 
