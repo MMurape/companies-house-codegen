@@ -5,6 +5,7 @@ on:
     paths:
       - src/**
       - tests/**
+      - docs/**
       - "*.md"
 permissions:
   contents: write
