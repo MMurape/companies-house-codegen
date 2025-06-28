@@ -140,12 +140,14 @@ def reformat_swagger(
             if tmp == "date":
                 # NOTE: Companies House treats date as a type instead of a format
                 # type<date> = type<string(format='date')>
+                logger.debug('Converting `data` to `string(format="date")`')
                 swagger["type"] = "string"
                 swagger["format"] = "date"
 
             elif tmp == "list":
                 # NOTE: Companies House aliases array to list
                 # type<list> = type<array(item='string', collectionFormat='csv'|'multi')>
+                logger.debug("Converting `list` to `array`")
                 swagger["type"] = "array"
                 swagger["items"] = OrderedDict({"type": "string"})
             elif tmp == "array" and "items" not in swagger:
@@ -251,8 +253,9 @@ def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder
 
     Also See
     --------
-    reformat_swagger : TODO: document
-    CHOAS: TODO: document
+    reformat_swagger : Reformats Companies House Swagger 2.0 specifications (in-place)
+        and returns refs defined in the schema.
+    CHOAS: enum of available Swagger 2.0 specfications.
 
     Raises
     ------
