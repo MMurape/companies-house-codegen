@@ -19,7 +19,15 @@ Unfortunately, the Companies House API does not come with an official SDK. Fortu
 
 This small, configurable and simple tool fetches the OpenAPI for Companies House API, formats them to fix errors found in them.
 
-## Installation
+## Getting Started
+
+### Requirements
+
+`companies-house-codegen` requires Python 3.8+
+and [`typing-extensions`](https://github.com/python/typing_extensions).
+You may also, optionally, install pydantic for additional typesafety.
+
+### Installation
 
 [`pip`](https://pip.pypa.io/) is the default package installer for Python,
 enabling easy installation and management of packages
@@ -31,7 +39,7 @@ via the command line.
 > The methods described work for other package manegers like
 > [`uv`](https://docs.astral.sh/uv/) and [`poetry`](https://python-poetry.org/)
 
-### Install From PyPI
+#### Install From PyPI
 
 To this package from PyPI, run:
 
@@ -39,7 +47,7 @@ To this package from PyPI, run:
 pip install companies-house-codegen
 ```
 
-### Install From Github (Using VCS Support)
+#### Install From Github (Using VCS Support)
 
 To install from latest version of this Github repo use:
 
@@ -52,7 +60,7 @@ pip install git+https://github.com/MMurape/companies-house-codegen.git@main
 > for more infomation. Note, that most modern package managers also come with VCS support
 > similar to `pip`.
 
-### Install From A Git Clone (Using a clone of this repo)
+#### Install From A Git Clone (Using a clone of this repo)
 
 To install this repository from a git clone, perform the following steps:
 
@@ -68,12 +76,6 @@ To install this repository from a git clone, perform the following steps:
     ```shell
     pip install .
     ```
-
-## Requirements
-
-`companies-house-codegen` requires Python 3.8+
-and [`typing-extensions`](https://github.com/python/typing_extensions).
-You may also, optionally, install pydantic for additional typesafety.
 
 ## Usage
 
