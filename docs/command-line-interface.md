@@ -48,5 +48,5 @@ companies-house-codegen -i https://developer-specs.company-information.service.g
 ```
 
 > [!TIP]
-> For more information, see [argument](/api-reference/argument)
-> in [API Reference](docs/api-reference).
+> For more information, see [argument](api-reference/argument.md)
+> in [API Reference](api-reference/index.md).
