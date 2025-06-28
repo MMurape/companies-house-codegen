@@ -16,6 +16,7 @@ copyright: Copyright &copy; 2025 Munyaradzi Murape
 
 
 theme:
+  custom_dir: docs/.overides
   name: "material"
   features:
   - announce.dismiss
