@@ -69,8 +69,8 @@ logger.setLevel(logging.DEBUG)
 def reformat_swagger(
     swagger: JSONSchema,
     remote_path: RemoteJsonRefPathStr,
-    diff: bool = False,
     flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    diff: bool = False,
     *,
     host: str = COMPANIES_HOUSE_HOST,
     scheme: URLSchemeType = URLScheme.HTTPS,
@@ -86,12 +86,12 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr
         Represents the part of a Remote JSON reference as described in
         `Using $ref | Swagger Docs <https://swagger.io/docs/specification/v3_0/using-ref>`_.
-    diff: bool, optional
-        If True, logs the difference between pre and post formatting
-        to stderr at INFO level logging. Default False.
     flags: FormatFlags, optional
         selects various formatting rules.
         Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    diff: bool, optional
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging. Default False.
     host: str, optional, keyword only
         The host name that overrides the feedback adress.
         Default `'developer-specs.company-information.service.gov.uk'`.
@@ -339,9 +339,15 @@ def reformat_swagger(
 
 
 @validate_call
-def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder:
+def download_folder(
+    url: CHOASType | str,
+    threaded: bool = True,
+    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    diff: bool = False,
+) -> SchemaFolder:
     """
-    Downloads a Comapanies House Swagger specification folder.
+    Downloads a Comapanies House Swagger specification folder
+    and formats each file in it.
 
     Parameters
     ----------
@@ -352,6 +358,12 @@ def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder
 
         NOTE: On my machine this increased the speed of the download process by
                 between 4 and 5 times.
+    flags: FormatFlags, optional
+        selects various formatting rules.
+        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    diff: bool, optional
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging. Default False.
 
     Returns
     -------
@@ -379,7 +391,7 @@ def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder
     folder: SchemaFolder = OrderedDict()
 
     def inner(url: SplitResult) -> None:
-        nonlocal folder, threaded
+        nonlocal folder, threaded, diff, flags
 
         if url.path in folder:
             return
@@ -394,6 +406,8 @@ def download_folder(url: CHOASType | str, threaded: bool = True) -> SchemaFolder
         refs = reformat_swagger(
             swagger=obj,
             remote_path=url.path,
+            diff=diff,
+            flags=flags,
             scheme=cast(URLSchemeType, root.scheme),
             host=cast(str, root.hostname),
         )
@@ -523,7 +537,12 @@ def zip_folder(
 
 
 @validate_call
-def download_swagger(url: CHOASType, threaded: bool = True) -> JSONSchema:
+def download_swagger(
+    url: CHOASType,
+    threaded: bool = True,
+    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    diff: bool = False,
+) -> JSONSchema:
     """
     Downloads a Companies House Swagger specification.
 
@@ -536,6 +555,12 @@ def download_swagger(url: CHOASType, threaded: bool = True) -> JSONSchema:
 
         NOTE: On my machine this increased the speed of the download process by
                 between 4 and 5 times.
+    flags: FormatFlags, optional
+        selects various formatting rules.
+        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    diff: bool, optional
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging. Default False.
 
     Returns
     -------
@@ -558,7 +583,7 @@ def download_swagger(url: CHOASType, threaded: bool = True) -> JSONSchema:
     A composite function of `zip_folder` and `download_folder`.
     """
     return zip_folder(
-        folder=download_folder(url=url, threaded=threaded),
+        folder=download_folder(url=url, threaded=threaded, diff=diff, flags=flags),
         remote_path=urlsplit(url).path,
     )
 
@@ -618,7 +643,12 @@ def swagger_converter(swagger: JSONSchema) -> JSONSchema:
 
 
 @validate_call
-def download_openapi(url: CHOASType, threaded: bool = True) -> JSONSchema:
+def download_openapi(
+    url: CHOASType,
+    threaded: bool = True,
+    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    diff: bool = False,
+) -> JSONSchema:
     """
     Convenient helper function for downloading a Companies House Swagger schema
     and converting it to
@@ -632,6 +662,12 @@ def download_openapi(url: CHOASType, threaded: bool = True) -> JSONSchema:
 
         NOTE: On my machine this increased the speed of the download process by
                 between 4 and 5 times.
+    flags: FormatFlags, optional
+        selects various formatting rules.
+        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    diff: bool, optional
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging. Default False.
 
     Returns
     -------
@@ -653,7 +689,9 @@ def download_openapi(url: CHOASType, threaded: bool = True) -> JSONSchema:
     -----
     A composite function of `swagger_converter` and `download_swagger`.
     """
-    return swagger_converter(download_swagger(url=url, threaded=threaded))
+    return swagger_converter(
+        download_swagger(url=url, threaded=threaded, diff=diff, flags=flags)
+    )
 
 
 @validate_call
