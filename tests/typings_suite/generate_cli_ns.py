@@ -98,8 +98,8 @@ def generate_namespace_typing(
         type_hint = (
             getattr(tmp, "__name__", tmp) if not hasattr(tmp, "__args__") else str(tmp)
         )  # accounts for annotated types
-        if a.nargs in ('*', '+') or (isinstance(a.nargs, int) and a.nargs>0):
-            type_hint = f'typing.Sequence[{type_hint}]'
+        if a.nargs in ("*", "+") or (isinstance(a.nargs, int) and a.nargs > 0):
+            type_hint = f"typing.Sequence[{type_hint}]"
 
         default = a.default
         if default_aliases is not None:
@@ -191,15 +191,21 @@ class {cls.__name__}{parents}:
 
 if __name__ == "__main__":
     import sys
+
     from companies_house_codegen.argument import CLIArgumentParser
     from companies_house_codegen.constants import ReFormatFlags
+
     ns_typing = generate_namespace_typing(
-        CLIArgumentParser(), 'CLINamespace',
+        CLIArgumentParser(),
+        "CLINamespace",
         default_aliases=[
-            (sys.stdout, 'sys.stdout'),
-            (tuple(ReFormatFlags), '('+', '.join(str(f) for f in ReFormatFlags)+')')
+            (sys.stdout, "sys.stdout"),
+            (
+                tuple(ReFormatFlags),
+                "(" + ", ".join(str(f) for f in ReFormatFlags) + ")",
+            ),
         ],
         description="Typings for namespace of `companies-house-codegen` "
-                "command-line interface."
+        "command-line interface.",
     )
-    print(ns_typing) # noqa: T201
+    print(ns_typing)  # noqa: T201

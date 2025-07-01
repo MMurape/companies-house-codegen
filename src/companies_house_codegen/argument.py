@@ -39,6 +39,7 @@ from companies_house_codegen.constants import (
     LOCALHOST_IP,
     RE_SERVER_ADDR,
     COMPANIES_HOUSE_PORT,
+    ReFormatFlags,
 )
 
 
@@ -51,6 +52,10 @@ class CLINamespace(argparse.Namespace):
     ----------
     input: str
         URL of a Companies House Swagger Specification from the Companies House Developer's API Suite. See: companies_house_codegen.constants.CHOAS or https://developer-specs.company-information.service.gov.uk for more info.
+    select: typing.Sequence[ReFormatFlags], optional
+        Space-separated list of rule codes to enable. See, companies_house_codegen.constants.ReFormatFlags for more info on available flags.
+    ignore: typing.Sequence[ReFormatFlags], optional
+        Space-separated list of rule codes to disable. Note, ignored rules have higher priority than slected rules from `--select` flag. See, companies_house_codegen.constants.ReFormatFlags for more info on available flags.
     extract: Path, optional
         When specified, save specification files as to a directory.
     zip: typing.IO[str], optional
@@ -63,25 +68,39 @@ class CLINamespace(argparse.Namespace):
         Stop emitting all non-critical output. Error messages will still be emitted (which can silenced by 2>/dev/null).
     threaded: bool, optional
         Download syncronously on a single thread. By default, downloads syncronously using multithreading. Useful for debugging.
+    diff: bool, optional
+        Logs the difference between pre and post formatting. Note, will be ignored if the `--silent` flag is passed.
     verbose: bool, optional
         Use verbose debug logging
 
     Notes
     -----
-    Generated using `companies_house_codegen.utils.generate_namespace_typing`
+    Generated using
+    `generate_namespace_typing<https://mmurape.github.io/companies-house-codegen/developement/typings_suite/#typings_suite.generate_cli_ns>`_
 
     See Also
     --------
-    `companies_house_codegen.utils.generate_namespace_typing`
+    https://mmurape.github.io/companies-house-codegen/developement/typings_suite/#typings_suite.generate_cli_ns
     """
 
     input: str
+    select: typing.Sequence[ReFormatFlags] = (
+        ReFormatFlags.TYPE_DATE_TO_STRING,
+        ReFormatFlags.TYPE_LIST_TO_ARRAY,
+        ReFormatFlags.TYPE_INFER_BOOLEANS,
+        ReFormatFlags.TYPE_ARRAY_ENSURE_ITEMS,
+        ReFormatFlags.PATHS_ENSURE_SNAKECASE,
+        ReFormatFlags.PARAM_PARAMTYPE_TO_IN,
+        ReFormatFlags.PARAM_TITLE_TO_NAME,
+    )
+    ignore: typing.Sequence[ReFormatFlags] = ()
     extract: Path | None = None
     zip: typing.IO[str] = sys.stdout
     openapi: bool = False
     serve: tuple[str, int] | None = None
     silent: bool = False
     threaded: bool = True
+    diff: bool = False
     verbose: bool = False
 
 
@@ -104,10 +123,12 @@ class CLIArgumentParser(argparse.ArgumentParser):
             version=f"%(prog)s, {version(self.prog)}",
             help="Show version and exit.",
         )
+
         input_options = self.add_argument_group(title="Input options")
         output_options = self.add_argument_group(title="Output and formatting options")
         debug_options = self.add_argument_group(title="Debugging options")
 
+        # input options
         input_options.add_argument(
             "--input",
             "-i",
@@ -120,6 +141,32 @@ class CLIArgumentParser(argparse.ArgumentParser):
             "See: companies_house_codegen.constants.CHOAS "
             "or https://developer-specs.company-information.service.gov.uk "
             "for more info.",
+        )
+
+        def parse_rule(string: str) -> ReFormatFlags:
+            return ReFormatFlags[string]
+
+        input_options.add_argument(
+            "--select",
+            nargs="*",
+            metavar="RULE",
+            type=parse_rule,
+            help="Space-separated list of rule codes to enable. "
+            "See, companies_house_codegen.constants.ReFormatFlags for more info "
+            "on available flags.",
+            default=tuple(ReFormatFlags),
+        )
+        input_options.add_argument(
+            "--ignore",
+            nargs="*",
+            metavar="RULE",
+            type=parse_rule,
+            help="Space-separated list of rule codes to disable. "
+            "Note, ignored rules have higher priority than slected rules "
+            "from `--select` flag. "
+            "See, companies_house_codegen.constants.ReFormatFlags for more info "
+            "on available flags.",
+            default=tuple(),
         )
 
         # output options
@@ -161,13 +208,6 @@ class CLIArgumentParser(argparse.ArgumentParser):
             "This can be overidden by passing an argument argument <IP:PORT> is passed",
         )
 
-        # TODO: implement
-        # output_options.add_argument(
-        #    '--no-format',
-        #    action="store_false",
-        #    help="No formatting"
-        # )
-
         # debug options
         debug_options.add_argument(
             "--silent",
@@ -183,6 +223,12 @@ class CLIArgumentParser(argparse.ArgumentParser):
             help="Download syncronously on a single thread. "
             "By default, downloads syncronously using multithreading. "
             "Useful for debugging.",
+        )
+        debug_options.add_argument(
+            "--diff",
+            action="store_true",
+            help="Logs the difference between pre and post formatting. "
+            "Note, will be ignored if the `--silent` flag is passed.",
         )
         debug_options.add_argument(
             "--verbose", "-v", action="store_true", help="Use verbose debug logging"
