@@ -69,10 +69,11 @@ logger.setLevel(logging.DEBUG)
 def reformat_swagger(
     swagger: JSONSchema,
     remote_path: RemoteJsonRefPathStr,
-    host: str = COMPANIES_HOUSE_HOST,
-    scheme: URLSchemeType = URLScheme.HTTPS,
     diff: bool = False,
     flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    *,
+    host: str = COMPANIES_HOUSE_HOST,
+    scheme: URLSchemeType = URLScheme.HTTPS,
 ) -> list[SplitResult]:
     """
     Reformats Companies House Swagger 2.0 specifications (in-place)
@@ -85,17 +86,17 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr
         Represents the part of a Remote JSON reference as described in
         `Using $ref | Swagger Docs <https://swagger.io/docs/specification/v3_0/using-ref>`_.
+    diff: bool
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging.
+    flags: FormatFlags, optional
+        selects various formatting features
     host: str
         The host name that overrides the feedback adress.
         Default `'developer-specs.company-information.service.gov.uk'`.
     scheme: str
         The scheme that will be used for http request
         Default `'https'`.
-    diff: bool
-        If True, logs the difference between pre and post formatting
-        to stderr at INFO level logging.
-    flags: FormatFlags, optional
-        selects various formatting features
 
     Notes
     -----
