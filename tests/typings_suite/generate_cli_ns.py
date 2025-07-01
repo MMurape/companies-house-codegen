@@ -99,7 +99,7 @@ def generate_namespace_typing(
             getattr(tmp, "__name__", tmp) if not hasattr(tmp, "__args__") else str(tmp)
         )  # accounts for annotated types
         if a.nargs in ('*', '+') or (isinstance(a.nargs, int) and a.nargs>0):
-            type_hint = f'Sequence[{type_hint}]'
+            type_hint = f'typing.Sequence[{type_hint}]'
 
         default = a.default
         if default_aliases is not None:
@@ -132,7 +132,7 @@ def generate_namespace_typing(
 
     newline = "\n"
     return f'''
-class {name}(Namespace):
+class {name}(argparse.Namespace):
     """
     {description.replace(newline, newline + TAB)}
 
@@ -149,6 +149,7 @@ class {name}(Namespace):
     --------
     https://mmurape.github.io/companies-house-codegen/developement/typings_suite/#typings_suite.generate_cli_ns
     """
+
 {newline.join(param_annotations)}
 '''
 
