@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "companies-house-codegen"
-version = "0.2.0"
+version = "0.2.1"
 description = "A simple but powerful toolkit for Companies House OpenAPI (Swagger 2.0) specifications."
 authors = [
     {name = "Munyaradzi Murape"},
@@ -44,10 +44,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/MMurape"
-#Documentation = "https:/"
+Homepage = "https://github.com/MMurape/companies-house-codegen"
 Repository = "https://github.com/MMurape/companies-house-codegen"
 Issues = "https://github.com/MMurape/companies-house-codegen/issues"
+Documentation = "https://mmurape.github.io/companies-house-codegen"
 
 
 [project.scripts]
