@@ -19,9 +19,16 @@ options:
   --version, -V         Show version and exit.
 
 Input options:
-  --input URL, -i URL   URL of a Companies House Swagger Specification from the Companies House     
-                        Developer's API Suite. See: companies_house_codegen.constants.CHOAS or      
-                        https://developer-specs.company-information.service.gov.uk for more info.   
+  --input URL, -i URL   URL of a Companies House Swagger Specification from the Companies House       
+                        Developer's API Suite. See: companies_house_codegen.constants.CHOAS or        
+                        https://developer-specs.company-information.service.gov.uk for more info.     
+  --select [RULE ...]   Space-separated list of rule codes to enable. See,
+                        companies_house_codegen.constants.ReFormatFlags for more info on available    
+                        flags.
+  --ignore [RULE ...]   Space-separated list of rule codes to disable. Note, ignored rules have       
+                        higher priority than slected rules from `--select` flag. See,
+                        companies_house_codegen.constants.ReFormatFlags for more info on available    
+                        flags.
 
 Output and formatting options:
   --extract DIR, -e DIR
@@ -29,14 +36,16 @@ Output and formatting options:
   --zip FILE, -z FILE   Output as single file. Outputs as to stdout otherwise
   --openapi             Convert Swagger specification to OpenAPI.
   --serve [IP:PORT]     When specified, creates a local HTTP server. By default, serves on
-                        127.0.0.1:10000. This can be overidden by passing an argument argument      
+                        127.0.0.1:10000. This can be overidden by passing an argument argument        
                         <IP:PORT> is passed
 
 Debugging options:
-  --silent, -s          Stop emitting all non-critical output. Error messages will still be
-                        emitted (which can silenced by 2>/dev/null).
-  --single-threaded     Download syncronously on a single thread. By default, downloads
-                        syncronously using multithreading. Useful for debugging.
+  --silent, -s          Stop emitting all non-critical output. Error messages will still be emitted   
+                        (which can silenced by 2>/dev/null).
+  --single-threaded     Download syncronously on a single thread. By default, downloads syncronously  
+                        using multithreading. Useful for debugging.
+  --diff                Logs the difference between pre and post formatting. Note, will be ignored    
+                        if the `--silent` flag is passed.
   --verbose, -v         Use verbose debug logging
 ```
 
