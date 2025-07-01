@@ -71,7 +71,7 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr,
     host: str = COMPANIES_HOUSE_HOST,
     scheme: URLSchemeType = URLScheme.HTTPS,
-    log_diffs: bool = False,
+    diff: bool = False,
     flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
 ) -> list[SplitResult]:
     """
@@ -91,8 +91,9 @@ def reformat_swagger(
     scheme: str
         The scheme that will be used for http request
         Default `'https'`.
-    log_diffs: bool
-        Logs the difference between pre and post formatting
+    diff: bool
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging.
     flags: FormatFlags, optional
         selects various formatting features
 
@@ -313,7 +314,7 @@ def reformat_swagger(
                     _i=_i,
                 )
 
-    if log_diffs:
+    if diff:
         lines1 = json.dumps(swagger, indent=2, sort_keys=False).splitlines()
         inner(swagger=swagger, url_path=remote_path)
         lines2 = json.dumps(swagger, indent=2, sort_keys=False).splitlines()
