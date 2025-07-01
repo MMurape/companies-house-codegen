@@ -41,17 +41,23 @@ def generate_namespace_typing(
 
     Examples
     --------
-    This was used to generate the :class:`CLINamespace`
+    This was used to generate
+    `companies_house_codegen.argument.CLINamespace<https://mmurape.github.io/companies-house-codegen/api-reference/argument/#companies_house_codegen.argument.CLINamespace>`_
 
     >>> import sys
     ... from companies_house_codegen.argument import CLIArgumentParser
-    ... from tests.argument_utils import generate_namespace_typing
-    ... print(generate_namespace_typing(
+    ... from companies_house_codegen.constants import ReFormatFlags
+    ... from tests.typings_suite.generate_cli_ns import generate_namespace_typing
+    ... ns_typing = generate_namespace_typing(
     ...     CLIArgumentParser(), 'CLINamespace',
-    ...     default_aliases=[(sys.stdout, 'sys.stdout')],
+    ...     default_aliases=[
+    ...         (sys.stdout, 'sys.stdout'),
+    ...         (tuple(ReFormatFlags), '('+', '.join(str(f) for f in ReFormatFlags)+')')
+    ...     ],
     ...     description="Typings for namespace of `companies-house-codegen` "
     ...                 "command-line interface."
-    ... ))
+    ... )
+    ... print(ns_typing)
     """
     TAB = "    "
 
@@ -63,7 +69,7 @@ def generate_namespace_typing(
     opt_param_annotations: list[str] = []
 
     for a in argparser._actions:
-        if a.default == "==SUPPRESS==":
+        if a.default == argparse.SUPPRESS:
             continue
 
         param_name = a.dest
@@ -92,6 +98,9 @@ def generate_namespace_typing(
         type_hint = (
             getattr(tmp, "__name__", tmp) if not hasattr(tmp, "__args__") else str(tmp)
         )  # accounts for annotated types
+        if a.nargs in ('*', '+') or (isinstance(a.nargs, int) and a.nargs>0):
+            type_hint = f'Sequence[{type_hint}]'
+
         default = a.default
         if default_aliases is not None:
             for k, v in default_aliases:
@@ -133,11 +142,12 @@ class {name}(Namespace):
 
     Notes
     -----
-    Generated using `companies_house_codegen.utils.generate_namespace_typing`
+    Generated using 
+    `generate_namespace_typing<https://mmurape.github.io/companies-house-codegen/developement/typings_suite/#typings_suite.generate_cli_ns>`_
 
     See Also
     --------
-    `companies_house_codegen.utils.generate_namespace_typing`
+    https://mmurape.github.io/companies-house-codegen/developement/typings_suite/#typings_suite.generate_cli_ns
     """
 {newline.join(param_annotations)}
 '''
@@ -179,14 +189,16 @@ class {cls.__name__}{parents}:
 
 
 if __name__ == "__main__":
+    import sys
     from companies_house_codegen.argument import CLIArgumentParser
-
-    print(  # noqa: T201
-        generate_namespace_typing(
-            CLIArgumentParser(),
-            "CLINamespace",
-            default_aliases=[(sys.stdout, "sys.stdout")],
-            description="Typings for namespace of `companies-house-codegen` "
-            "command-line interface.",
-        )
+    from companies_house_codegen.constants import ReFormatFlags
+    ns_typing = generate_namespace_typing(
+        CLIArgumentParser(), 'CLINamespace',
+        default_aliases=[
+            (sys.stdout, 'sys.stdout'),
+            (tuple(ReFormatFlags), '('+', '.join(str(f) for f in ReFormatFlags)+')')
+        ],
+        description="Typings for namespace of `companies-house-codegen` "
+                "command-line interface."
     )
+    print(ns_typing) # noqa: T201
