@@ -68,11 +68,10 @@ Logger for companies_house_codegen.codegen
 def reformat_swagger(
     swagger: JSONSchema,
     remote_path: RemoteJsonRefPathStr,
-    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
-    diff: bool = False,
-    *,
     host: str = COMPANIES_HOUSE_HOST,
     scheme: URLSchemeType = URLScheme.HTTPS,
+    flags: ReFormatFlags | None = SELECT_ALL_FORMAT_FLAGS,
+    diff: bool = False,
 ) -> list[SplitResult]:
     """
     Reformats Companies House Swagger 2.0 specifications (in-place)
@@ -85,18 +84,18 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr
         Represents the part of a Remote JSON reference as described in
         `Using $ref | Swagger Docs <https://swagger.io/docs/specification/v3_0/using-ref>`_.
-    flags: FormatFlags, optional
-        selects various formatting rules.
-        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
-    diff: bool, optional
-        If True, logs the difference between pre and post formatting
-        to stderr at INFO level logging. Default False.
     host: str, optional, keyword only
         The host name that overrides the feedback adress.
         Default `'developer-specs.company-information.service.gov.uk'`.
     scheme: str, optional, keyword only
         The scheme that will be used for http request
         Default `'https'`.
+    flags: FormatFlags, optional
+        selects various formatting rules.
+        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    diff: bool, optional
+        If True, logs the difference between pre and post formatting
+        to stderr at INFO level logging. Default False.
 
     Notes
     -----
