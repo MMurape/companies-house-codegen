@@ -39,8 +39,9 @@ from yaml.representer import SafeRepresenter
 R = TypeVar("R")
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
+"""
+Logger for companies_house_codegen.codegen
+"""
 
 class FileTypeExtension(argparse.FileType):
     """

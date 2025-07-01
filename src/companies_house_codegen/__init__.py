@@ -46,7 +46,9 @@ from companies_house_codegen.argument import CLINamespace, CLIArgumentParser
 from companies_house_codegen.constants import LOOPBACK_ADDR, ExitCode
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+"""
+Logger for companies_house_codegen
+"""
 
 
 def void_main(args: Sequence[str] | None = None) -> None:
@@ -81,6 +83,8 @@ def void_main(args: Sequence[str] | None = None) -> None:
             )
         if cli_args.threaded:
             logger.warning("Multi-threading enabled: exceptions are unhandled")
+    else:
+        logging.basicConfig(level=logging.CRITICAL)
     remote_path = urlsplit(cli_args.input).path
     flags = None
     if len(cli_args.select) > 0:
@@ -111,6 +115,7 @@ def void_main(args: Sequence[str] | None = None) -> None:
     if cli_args.extract:
         save_folder(folder, out_dir=cli_args.extract, remote_base=LOOPBACK_ADDR)
     if cli_args.serve:
+        logging.getLogger().setLevel(logging.INFO)
         create_server(cli_args.serve)
 
 

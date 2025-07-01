@@ -61,7 +61,7 @@ For logging the following rules apply:
 0. Use `logging` module for logging.
 1. Loggers must be declared at the top of the file after imports and global constants.
 2. The name of each logger must be `__name__`.
-3. Log level of all named loggers must be `logging.DEBUG`.
+3. Do not set log level of named loggers.
 4. Never log using the root logger.
 5. Do not share loggers between modules.
 6. Loggers stream must be set to `stdout`;
@@ -74,7 +74,6 @@ Here is an example of a logger in a module file.
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 logger.debug(f"Created logger for {__name__}")
 ```
 

@@ -62,7 +62,6 @@ logger = logging.getLogger(__name__)
 """
 Logger for companies_house_codegen.codegen
 """
-logger.setLevel(logging.DEBUG)
 
 
 @validate_call
@@ -467,7 +466,7 @@ def zip_folder(
     swagger_converter : Converts Swagger schemas to OpenAPI
     """
     logger.info(
-        f"Zipping folder:\n"
+        f"Zipping folder:\n  - "
         + " \n  - ".join(
             f"'{k}' <-- root" if k == remote_path else f"'{k}'" for k in folder.keys()
         )
