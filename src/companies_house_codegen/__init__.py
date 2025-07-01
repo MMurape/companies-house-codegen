@@ -80,10 +80,25 @@ def void_main(args: Sequence[str] | None = None) -> None:
                 stream=sys.stderr,
             )
         if cli_args.threaded:
-            logger.warning("multi-threading enabled")
-
+            logger.warning("Multi-threading enabled: exceptions are unhandled")
     remote_path = urlsplit(cli_args.input).path
-    folder = download_folder(cli_args.input, threaded=cli_args.threaded)
+    flags = None
+    if len(cli_args.select) > 0:
+        flags = cli_args.select[0]
+        for flag in cli_args.select:
+            flags |= flag
+
+        if len(cli_args.ignore) > 0:
+            for flag in cli_args.ignore:
+                if flag in flags:
+                    flags ^= flag
+
+    folder = download_folder(
+        cli_args.input,
+        threaded=cli_args.threaded,
+        flags=flags,
+        diff=cli_args.diff,
+    )
     m = zip_folder(folder=folder, remote_path=remote_path)
     if cli_args.openapi:
         m = swagger_converter(m)
