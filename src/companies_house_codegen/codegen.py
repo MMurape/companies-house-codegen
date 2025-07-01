@@ -86,15 +86,16 @@ def reformat_swagger(
     remote_path: RemoteJsonRefPathStr
         Represents the part of a Remote JSON reference as described in
         `Using $ref | Swagger Docs <https://swagger.io/docs/specification/v3_0/using-ref>`_.
-    diff: bool
+    diff: bool, optional
         If True, logs the difference between pre and post formatting
-        to stderr at INFO level logging.
+        to stderr at INFO level logging. Default False.
     flags: FormatFlags, optional
-        selects various formatting features
-    host: str
+        selects various formatting rules.
+        Default `companies_house_codegen.constants.SELECT_ALL_FORMAT_FLAGS`.
+    host: str, optional, keyword only
         The host name that overrides the feedback adress.
         Default `'developer-specs.company-information.service.gov.uk'`.
-    scheme: str
+    scheme: str, optional, keyword only
         The scheme that will be used for http request
         Default `'https'`.
 
