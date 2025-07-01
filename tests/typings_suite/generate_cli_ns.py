@@ -99,7 +99,7 @@ def generate_namespace_typing(
             getattr(tmp, "__name__", tmp) if not hasattr(tmp, "__args__") else str(tmp)
         )  # accounts for annotated types
         if a.nargs in ("*", "+") or (isinstance(a.nargs, int) and a.nargs > 0):
-            type_hint = f"typing.Sequence[{type_hint}]"
+            type_hint = f"collections.abc.Sequence[{type_hint}]"
 
         default = a.default
         if default_aliases is not None:

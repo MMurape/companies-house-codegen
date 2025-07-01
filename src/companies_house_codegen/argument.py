@@ -29,6 +29,7 @@ from __future__ import annotations
 import sys
 import typing
 import argparse
+import collections.abc
 from pathlib import Path
 from dataclasses import dataclass
 from importlib.metadata import version
@@ -84,7 +85,7 @@ class CLINamespace(argparse.Namespace):
     """
 
     input: str
-    select: typing.Sequence[ReFormatFlags] = (
+    select: collections.abc.Sequence[ReFormatFlags] = (
         ReFormatFlags.TYPE_DATE_TO_STRING,
         ReFormatFlags.TYPE_LIST_TO_ARRAY,
         ReFormatFlags.TYPE_INFER_BOOLEANS,
@@ -93,7 +94,7 @@ class CLINamespace(argparse.Namespace):
         ReFormatFlags.PARAM_PARAMTYPE_TO_IN,
         ReFormatFlags.PARAM_TITLE_TO_NAME,
     )
-    ignore: typing.Sequence[ReFormatFlags] = ()
+    ignore: collections.abc.Sequence[ReFormatFlags] = ()
     extract: Path | None = None
     zip: typing.IO[str] = sys.stdout
     openapi: bool = False
