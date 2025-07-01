@@ -1,7 +1,7 @@
 
 # companies-house-codegen
 
-[![PyPI Version](https://img.shields.io/pypi/v/companies-house-codegen)](https://pypi.org/p/comapanies-house-codegen)
+[![PyPI Version](https://img.shields.io/pypi/v/companies-house-codegen)](https://pypi.org/p/companies-house-codegen)
 [![mkdocs](https://github.com/mmurape/companies-house-codegen/workflows/mkdocs/badge.svg)](https://mmurape.github.io/companies-house-codegen/)
 [![ruff](https://github.com/mmurape/companies-house-codegen/workflows/ruff/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
 [![mypy](https://github.com/mmurape/companies-house-codegen/workflows/mypy/badge.svg)](https://github.com/MMurape/companies-house-codegen/actions)
